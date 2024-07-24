@@ -27,6 +27,10 @@ type Exchange struct {
 	} `json:"USDBRL"`
 }
 
+type ExchangeResult struct {
+	Bid string `json:"bid"`
+}
+
 type ExchangeService struct {
 	db *sql.DB
 }
