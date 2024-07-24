@@ -28,18 +28,19 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	defer req.Body.Close()
 
+	now := time.Now()
 	res, err := http.DefaultClient.Do(req)
 	if err != nil {
 		log.Fatal(err)
 	}
+	defer res.Body.Close()
 
 	select {
 	case <-time.After(300 * time.Millisecond):
-		log.Println("Request processed with success")
+		log.Printf("Request processed with success: %s\n", time.Since(now))
 	case <-ctx.Done():
-		log.Fatal("Cancelled by client")
+		log.Fatalf("Cancelled by client - timeout: %s", time.Since(now))
 		return
 	}
 
