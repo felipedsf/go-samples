@@ -13,6 +13,7 @@ import (
 const (
 	URL       = "http://localhost:8080/cotacao"
 	FILE_NAME = "cotacao.txt"
+	TIMEOUT   = 300 * time.Millisecond
 )
 
 type Exchange struct {
@@ -21,7 +22,9 @@ type Exchange struct {
 
 func main() {
 	fmt.Println("Client is running!")
-	ctx, cncl := context.WithTimeout(context.Background(), 300*time.Millisecond)
+	now := time.Now()
+
+	ctx, cncl := context.WithTimeout(context.Background(), TIMEOUT)
 	defer cncl()
 
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, URL, nil)
@@ -29,20 +32,11 @@ func main() {
 		log.Fatal(err)
 	}
 
-	now := time.Now()
 	res, err := http.DefaultClient.Do(req)
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer res.Body.Close()
-
-	select {
-	case <-time.After(300 * time.Millisecond):
-		log.Printf("Request processed with success: %s\n", time.Since(now))
-	case <-ctx.Done():
-		log.Fatalf("Cancelled by client - timeout: %s", time.Since(now))
-		return
-	}
 
 	var exchange Exchange
 	err = json.NewDecoder(res.Body).Decode(&exchange)
@@ -59,4 +53,5 @@ func main() {
 	if err != nil {
 		log.Fatal("error to write file", err)
 	}
+	log.Printf("executed successfully in %s\n", time.Since(now))
 }

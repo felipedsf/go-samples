@@ -1,4 +1,4 @@
-package main
+package service
 
 import (
 	"context"
@@ -8,7 +8,8 @@ import (
 )
 
 const (
-	INSERT = "insert into exchange (code, codein, name, high, low, var_bid, pct_change, bid, ask, timestamp, create_date) values (?,?,?,?,?,?,?,?,?,?,?)"
+	TIMEOUT = 10 * time.Millisecond
+	INSERT  = "insert into exchange (code, codein, name, high, low, var_bid, pct_change, bid, ask, timestamp, create_date) values (?,?,?,?,?,?,?,?,?,?,?)"
 )
 
 type Exchange struct {
@@ -32,14 +33,14 @@ type ExchangeResult struct {
 }
 
 type ExchangeService struct {
-	db *sql.DB
+	Db *sql.DB
 }
 
 func (s ExchangeService) InsertExchange(exchange Exchange) {
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Millisecond)
+	ctx, cancel := context.WithTimeout(context.Background(), TIMEOUT)
 	defer cancel()
 
-	stmt, err := s.db.Prepare(INSERT)
+	stmt, err := s.Db.Prepare(INSERT)
 	if err != nil {
 		log.Fatal("error to prepare statement: ", err)
 		return
