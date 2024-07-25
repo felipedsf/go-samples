@@ -68,5 +68,5 @@ func GetExchange(w http.ResponseWriter, r *http.Request) {
 		log.Fatal(err)
 		return
 	}
-	log.Printf("executed successfully in %s\n", time.Since(now))
+	log.Printf("executed successfully in %s - bid: %s\n", time.Since(now), exchange.Usdbrl.Bid)
 }

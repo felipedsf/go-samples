@@ -53,5 +53,5 @@ func main() {
 	if err != nil {
 		log.Fatal("error to write file", err)
 	}
-	log.Printf("executed successfully in %s\n", time.Since(now))
+	log.Printf("executed successfully in %s - bid: %s\n", time.Since(now), exchange.Bid)
 }
